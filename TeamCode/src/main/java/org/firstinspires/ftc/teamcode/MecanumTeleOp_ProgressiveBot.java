@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+
+
 @TeleOp(name = "MecanumTeleOp_ProgressiveBot", group = "Linear Opmode")
 public class MecanumTeleOp_ProgressiveBot extends LinearOpMode {
 
@@ -14,6 +16,7 @@ public class MecanumTeleOp_ProgressiveBot extends LinearOpMode {
     private DcMotor arm, slider;
     private Servo servo1; // 270° Servo
     private Servo grip; // Continuous Rotation Servo
+    int targetPosition = 0;
 
     // PID Variables
     private double kP = 0.005;  // Proportional coefficient
@@ -56,6 +59,10 @@ public class MecanumTeleOp_ProgressiveBot extends LinearOpMode {
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Wait for the game to start
@@ -126,8 +133,21 @@ public class MecanumTeleOp_ProgressiveBot extends LinearOpMode {
 
             // Slider control
             double sliderPower = gamepad2.left_stick_x;
-            slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            slider.setPower(sliderPower * 0.7);
+
+            // Adjust target position based on stick input
+            if (sliderPower > 0.05) {
+                targetPosition += 10;  // Increment position
+            } else if (sliderPower < -0.05) {
+                targetPosition -= 10;  // Decrement position
+            }
+
+            // Set the target position and switch mode
+            slider.setTargetPosition(targetPosition);
+            slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slider.setPower(0.5);  // Adjust power as needed
+
+
+
 
 //            // Servo1 control based on buttons
 //            if (gamepad2.a) {
