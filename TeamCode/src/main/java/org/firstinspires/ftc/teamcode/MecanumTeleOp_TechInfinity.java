@@ -69,7 +69,7 @@ public class MecanumTeleOp_TechInfinity extends LinearOpMode {
             arm.setTargetPosition(armTargetPosition); //sets the target position of the arm
             if (armTargetPosition > arm.getCurrentPosition()) {//Arm is going down
                 arm.setPower(.15); //sets the arm power **ADJUST THIS NUMBER AS NEEDED!**
-            } else if ((armTargetPosition < arm.getCurrentPosition()) && (armTargetPosition < -850)) {
+            } else if ((armTargetPosition < arm.getCurrentPosition()) && (armTargetPosition < -1000)) {
                 arm.setPower(.25); //sets the arm power **ADJUST THIS NUMBER AS NEEDED!**
             } else {//arm is going up (front side)
                 arm.setPower(0.25); //sets the arm power **ADJUST THIS NUMBER AS NEEDED!**
@@ -85,29 +85,27 @@ public class MecanumTeleOp_TechInfinity extends LinearOpMode {
             double x = gamepad1.left_stick_x; // Strafing
             double rx = gamepad1.right_stick_x; // Turning
 
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 0.5);
             double frontLeftPower = (y + x + rx) / denominator;
             double backLeftPower = (y - x + rx) / denominator;
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y +  x - rx) / denominator;
 
-//            if (Math.abs(x) > 0.05) {
-//                frontLeftMotor.setPower(-x);
-//                backLeftMotor.setPower(x);
-//                frontRightMotor.setPower(-x);
-//                backRightMotor.setPower(x);
-//            } else {
-                frontLeftMotor.setPower(frontLeftPower);
-                backLeftMotor.setPower(backLeftPower);
-                backRightMotor.setPower(backRightPower);
-                frontRightMotor.setPower(frontRightPower);
-//            }
+            double multiplier = 0.7;
+
+            frontLeftMotor.setPower(frontLeftPower * multiplier);
+            backLeftMotor.setPower(backLeftPower * multiplier);
+            backRightMotor.setPower(backRightPower * multiplier);
+            frontRightMotor.setPower(frontRightPower * multiplier);
 
             if (((gamepad2.a) && (armTargetPosition < 0))) {//manual arm down
                 armTargetPosition = armTargetPosition + 1;
             } else if (((gamepad2.y) && (armTargetPosition > -1550))) {//manual arm up
                 armTargetPosition = armTargetPosition - 1;
             }
+
+            if (gamepad2.dpad_up) armTargetPosition = -792;
+            if (gamepad2.dpad_down) armTargetPosition = 0;
 
             // Arm control with joystick
 //            double armInput = -gamepad2.left_stick_y;
@@ -139,9 +137,9 @@ public class MecanumTeleOp_TechInfinity extends LinearOpMode {
 
             // Active intake
             if (gamepad2.left_bumper) {
-                servo1.setPosition(0.06);
+                servo1.setPosition(0.03);
             } else if (gamepad2.right_bumper) {
-                servo1.setPosition(0.3);
+                servo1.setPosition(0.2);
             }
 //            if (gamepad2.left_bumper) {
 //                servo2.setPower(0.5);
