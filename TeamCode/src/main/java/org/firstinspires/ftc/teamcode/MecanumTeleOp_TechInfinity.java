@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -14,7 +15,7 @@ public class MecanumTeleOp_TechInfinity extends LinearOpMode {
     private DcMotor frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor;
     private DcMotor arm, slider;
     private Servo servo1; // 270° Servo
-    private CRServo servo2; // Continuous Rotation Servo
+    private Servo servo2; // Continuous Rotation Servo
 
     // PID Variables
     private double kP = 0.005;  // Proportional coefficient
@@ -46,11 +47,11 @@ public class MecanumTeleOp_TechInfinity extends LinearOpMode {
         arm = hardwareMap.dcMotor.get("arm");
         slider = hardwareMap.get(DcMotor.class, "slider");
         servo1 = hardwareMap.servo.get("servo1");
-        servo2 = hardwareMap.crservo.get("servo2");
+        servo2 = hardwareMap.servo.get("servo2");
 
         // Reset and configure the arm motor encoder
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        arm.setDirection(DcMotorSimple.Direction.REVERSE);
+        arm.setDirection(DcMotorSimple.Direction.REVERSE);
         
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -81,7 +82,7 @@ public class MecanumTeleOp_TechInfinity extends LinearOpMode {
             frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
             backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
             double y = -gamepad1.left_stick_y; // Forward/backward
-            double x = -gamepad1.left_stick_x; // Strafing
+            double x = gamepad1.left_stick_x; // Strafing
             double rx = gamepad1.right_stick_x; // Turning
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
@@ -138,12 +139,17 @@ public class MecanumTeleOp_TechInfinity extends LinearOpMode {
 
             // Active intake
             if (gamepad2.left_bumper) {
-                servo2.setPower(0.5);
+                servo1.setPosition(0.06);
             } else if (gamepad2.right_bumper) {
-                servo2.setPower(-0.5);
-            } else {
-                servo2.setPower(-0.0);
+                servo1.setPosition(0.3);
             }
+//            if (gamepad2.left_bumper) {
+//                servo2.setPower(0.5);
+//            } else if (gamepad2.right_bumper) {
+//                servo2.setPower(-0.5);
+//            } else {
+//                servo2.setPower(-0.0);
+//            }
 
             // Servo2 control
 //            if (gamepad2.x) {
