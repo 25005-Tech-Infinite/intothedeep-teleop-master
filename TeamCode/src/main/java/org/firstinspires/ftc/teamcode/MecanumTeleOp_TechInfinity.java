@@ -31,8 +31,12 @@ public class MecanumTeleOp_TechInfinity extends LinearOpMode {
 
     // Arm control variables
     private int armTargetPosition = 0;
+
+    private int sliderPosition = 0;
     private static final double ARM_POWER = 0.3; // Max motor power
     private static final double DEADZONE = 0.1;
+
+    private int currentPosition = 0;
 
     // Slider threshold
     private static final double SLIDER_SPEED_THRESHOLD = 0.2;
@@ -52,6 +56,11 @@ public class MecanumTeleOp_TechInfinity extends LinearOpMode {
         // Reset and configure the arm motor encoder
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setDirection(DcMotorSimple.Direction.REVERSE);
+
+//        slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        currentPosition = slider.getCurrentPosition();
         
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -76,6 +85,11 @@ public class MecanumTeleOp_TechInfinity extends LinearOpMode {
             }
             arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //sets the arm to brake mode to prevent sagging while raised
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION); //sets the arm to run using the built in encoder
+
+//            slider.setTargetPosition(sliderPosition);
+//            slider.setPower(0.5);
+//            slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
             // Set up mecanum drive
@@ -104,7 +118,7 @@ public class MecanumTeleOp_TechInfinity extends LinearOpMode {
                 armTargetPosition = armTargetPosition - 1;
             }
 
-            if (gamepad2.dpad_up) armTargetPosition = -792;
+            if (gamepad2.dpad_up) armTargetPosition = -1114;
             if (gamepad2.dpad_down) armTargetPosition = 0;
 
             // Arm control with joystick
@@ -124,8 +138,56 @@ public class MecanumTeleOp_TechInfinity extends LinearOpMode {
 //            }
 
             // Slider control
-            double sliderPower = gamepad2.left_stick_x;
-            slider.setPower(sliderPower);
+
+//            if (Math.abs(gamepad2.left_stick_x) > 0.5) {
+//                if (gamepad2.left_stick_x > 0) {
+//                    if (armTargetPosition > -1100+200) {
+//                        if (sliderPosition < 2200) {
+//                            sliderPosition = sliderPosition + 15;
+//                        } else {
+//                            sliderPosition = sliderPosition;
+//                        }
+//                    } else {
+//                        sliderPosition = sliderPosition + 15;
+//                    }
+//                } else if ((sliderPosition - 15) > 0) {
+//                    sliderPosition = sliderPosition - 15;
+//                } else {
+//                    sliderPosition = 0;
+//                }
+//            }
+
+            if (armTargetPosition > -1100+200) {
+                if ((getCurrentSliderPosition() < 2200 && gamepad2.left_stick_x > 0) || gamepad2.left_stick_x < 0) {
+                    double sliderPower = gamepad2.left_stick_x;
+                    slider.setPower(sliderPower);
+                } else {
+                    slider.setPower(0);
+                }
+            } else {
+                double sliderPower = gamepad2.left_stick_x;
+                slider.setPower(sliderPower);
+            }
+
+//            if (Math.abs(gamepad2.left_stick_x) > 0.5) {
+//                if (gamepad2.left_stick_x > 0) {
+//                    if (armTargetPosition > -1100+200) {
+//                        if (sliderPosition < 2200) {
+//                            sliderPosition = sliderPosition + 15;
+//                        } else {
+//                            sliderPosition = sliderPosition;
+//                        }
+//                    } else {
+//                        sliderPosition = sliderPosition + 15;
+//                    }
+//                } else if ((sliderPosition - 15) > 0) {
+//                    sliderPosition = sliderPosition - 15;
+//                } else {
+//                    sliderPosition = 0;
+//                }
+//            }
+
+
 
 //            // Servo1 control based on buttons
 //            if (gamepad2.a) {
@@ -161,6 +223,10 @@ public class MecanumTeleOp_TechInfinity extends LinearOpMode {
             // Telemetry for debugging
             telemetry.addData("Arm Target Position", armTargetPosition);
             telemetry.addData("Arm Current Position", arm.getCurrentPosition());
+
+            telemetry.addData("Slider Target Position", sliderPosition);
+            telemetry.addData("Slider Current Position", getCurrentSliderPosition());
+
             telemetry.addData("Arm Error", armError);
             telemetry.addData("Servo1 Position", servo1.getPosition());
             telemetry.addData("Joystick Intake", gamepad2.right_stick_y);
@@ -170,5 +236,11 @@ public class MecanumTeleOp_TechInfinity extends LinearOpMode {
             telemetry.addData("BR Power", backRightPower);
             telemetry.update();
         }
+        // -1124 high arm
+        // slider 2205
+    }
+
+    private int getCurrentSliderPosition() {
+        return slider.getCurrentPosition() - currentPosition;
     }
 }

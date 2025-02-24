@@ -62,6 +62,8 @@ public class MecanumTeleOp_ProgressiveBot extends LinearOpMode {
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        slider.setDirection(DcMotorSimple.Direction.REVERSE);
+
         slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -160,9 +162,9 @@ public class MecanumTeleOp_ProgressiveBot extends LinearOpMode {
 
             // Passive intake
             if (gamepad2.left_bumper) {
-                grip.setPosition(0.0);
+                grip.setPosition(0.08);
             } else if (gamepad2.right_bumper) {
-                grip.setPosition(0.3);
+                grip.setPosition(0.2);
             }
 
             // Servo2 control
